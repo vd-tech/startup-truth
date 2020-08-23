@@ -1,0 +1,81 @@
+@tailwind base;
+
+/* Write your own custom base styles here */
+
+h1 {
+  @apply text-6xl;
+}
+
+h2 {
+  @apply text-4xl;
+}
+
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  padding-left: 1.5rem;
+  @apply list-inside;
+  @apply mb-5;
+}
+
+ol p,
+ul p {
+  display: inline;
+}
+
+ol {
+  @apply list-decimal;
+}
+ul {
+  @apply list-disc;
+}
+
+h3 {
+  @apply text-3xl;
+  @apply font-bold;
+  @apply my-5;
+}
+h5 {
+  @apply text-xl;
+  @apply font-bold;
+  @apply my-3;
+}
+p {
+  @apply mb-5;
+}
+
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: '\201C''\201D''\2018''\2019';
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+
+/* Start purging... */
+@tailwind components;
+/* Stop purging. */
+
+/* Write you own custom component styles here */
+.place-center {
+  @apply grid;
+  place-items: center;
+}
+
+/* Start purging... */
+@tailwind utilities;
+/* Stop purging. */
+
+/* Your own custom utilities */

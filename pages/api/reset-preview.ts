@@ -1,4 +1,11 @@
-export default (_req: any, res: any) => {
-  res.clearPreviewData()
-  res.status(200).end()
-}
+export default (req, res) => {
+  res.clearPreviewData();
+
+  if (req?.query?.redirect) {
+    res.writeHead(302, {
+      Location: '/',
+    });
+  }
+
+  res.status(200).end();
+};

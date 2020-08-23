@@ -1,3 +1,11 @@
-import { previewHandler } from 'next-tinacms-github'
+import { STRAPI_JWT } from "react-tinacms-strapi";
+const previewHandler = (req, res) => {
+  const previewData = {
+    strapi_jwt: req.cookies[STRAPI_JWT],
+  };
 
-export default previewHandler(process.env.SIGNING_KEY)
+  res.setPreviewData(previewData);
+  res.status(200).end();
+};
+
+export default previewHandler;

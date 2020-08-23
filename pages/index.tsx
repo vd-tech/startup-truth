@@ -1,90 +1,72 @@
+import { CMS_NAME } from '../lib/constants';
+import Container from 'components/container';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
-import { getGithubPreviewProps, parseJson } from 'next-tinacms-github';
-import { GetStaticProps } from 'next';
+import HeroPost from 'components/hero-post';
+import Intro from 'components/intro';
+import Layout from 'components/layout';
+import MoreStories from 'components/more-stories';
+import { fetchGraphql } from 'react-tinacms-strapi';
 
-export default function Home({ file }) {
-  const data = file.data;
+export default function Index({ allPosts, preview = false }) {
+  const heroPost = allPosts[0];
+  const morePosts = allPosts.slice(1);
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>{data.title}</h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+    <>
+      <Layout {...{ preview }}>
+        <Head>
+          <title>Next.js Blog Example with {CMS_NAME}</title>
+        </Head>
+        <Container>
+          <Intro />
+          {heroPost && (
+            <HeroPost
+              title={heroPost.title}
+              coverImage={
+                process.env.NEXT_PUBLIC_STRAPI_URL + heroPost.coverImage.url
+              }
+              date={heroPost.date}
+              author={heroPost.author}
+              slug={heroPost.slug}
+              excerpt={heroPost.excerpt}
+            />
+          )}
+          {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+        </Container>
+      </Layout>
+    </>
   );
 }
 
-export const getStaticProps: GetStaticProps = async function ({
-  preview,
-  previewData,
-}) {
+export async function getStaticProps({ params, preview, previewData }) {
+  const postResults = await fetchGraphql(
+    process.env.NEXT_PUBLIC_STRAPI_URL,
+    `
+    query{
+      articles {
+        title
+        date
+        slug
+        author {
+          name
+          picture { 
+            url
+          }
+        }
+        excerpt
+        coverImage {
+          url
+        }
+      }
+    }
+  `
+  );
   if (preview) {
-    return getGithubPreviewProps({
-      ...previewData,
-      fileRelativePath: 'content/home.json',
-      parse: parseJson,
-    });
+    return {
+      props: { allPosts: postResults.data.articles, preview, ...previewData },
+    };
   }
+
   return {
-    props: {
-      sourceProvider: null,
-      error: null,
-      preview: false,
-      file: {
-        fileRelativePath: 'content/home.json',
-        data: (await import('../content/home.json')).default,
-      },
-    },
+    props: { allPosts: postResults.data.articles, preview: false },
   };
-};
+}

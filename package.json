@@ -1,25 +1,32 @@
 {
-  "name": "startup-truth",
-  "version": "0.1.0",
-  "private": true,
+  "name": "blog-starter",
+  "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
+    "classnames": "2.2.6",
+    "date-fns": "2.10.0",
+    "dotenv": "^8.2.0",
+    "gray-matter": "4.0.2",
     "next": "9.5.2",
-    "next-tinacms-github": "^0.27.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-tinacms-github": "^0.28.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-icons": "^3.11.0",
+    "react-markdown": "^4.3.1",
+    "react-tinacms-editor": "^0.28.0",
+    "react-tinacms-inline": "^0.28.0",
+    "react-tinacms-strapi": "^0.28.0",
+    "remark": "11.0.2",
+    "remark-html": "10.0.0",
     "styled-components": "^5.1.1",
-    "tinacms": "^0.28.0"
+    "tinacms": "^0.22.0"
   },
   "devDependencies": {
     "@types/node": "^14.6.0",
     "@types/react": "^16.9.46",
-    "hygen-next-tinacms-github": "https://github.com/dwalkr/hygen-next-tinacms-github",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-preset-env": "^6.7.0",
     "tailwindcss": "^1.7.3",
