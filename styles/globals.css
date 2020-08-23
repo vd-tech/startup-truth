@@ -1,3 +1,6 @@
+@import 'tailwindcss/base';
+/* Write your own custom base styles here */
+
 html,
 body {
   padding: 0;
@@ -14,3 +17,27 @@ a {
 * {
   box-sizing: border-box;
 }
+/* Start purging... */
+@import 'tailwindcss/components';
+/* Stop purging. */
+
+/* Write you own custom component styles here */
+.btn-blue {
+  @apply bg-blue-500;
+  @apply text-white;
+  @apply font-bold;
+  @apply py-2;
+  @apply px-4;
+  @apply rounded;
+}
+
+.place-center {
+  @apply grid;
+  place-items: center;
+}
+
+/* Start purging... */
+@import 'tailwindcss/utilities';
+/* Stop purging. */
+
+/* Your own custom utilities */

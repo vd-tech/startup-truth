@@ -19,6 +19,10 @@
   "devDependencies": {
     "@types/node": "^14.6.0",
     "@types/react": "^16.9.46",
+    "hygen-next-tinacms-github": "https://github.com/dwalkr/hygen-next-tinacms-github",
+    "postcss-flexbugs-fixes": "^4.2.1",
+    "postcss-preset-env": "^6.7.0",
+    "tailwindcss": "^1.7.3",
     "typescript": "^4.0.2"
   }
 }
