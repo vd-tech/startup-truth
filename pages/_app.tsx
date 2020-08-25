@@ -18,10 +18,10 @@ export default function MyApp({ Component, pageProps }) {
         toolbar: pageProps.preview,
         enabled: pageProps.preview,
         apis: {
-          strapi: new StrapiClient(process.env.NEXT_PUBLIC_STRAPI_URL),
+          strapi: new StrapiClient(process.env.NEXT_PUBLIC_API_URL),
         },
         media: {
-          store: new StrapiMediaStore(process.env.NEXT_PUBLIC_STRAPI_URL),
+          store: new StrapiMediaStore(process.env.NEXT_PUBLIC_API_URL),
         },
       }),
     [pageProps.preview]

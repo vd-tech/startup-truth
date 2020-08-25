@@ -1,23 +1,24 @@
-import ErrorPage from 'next/error';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { InlineForm } from 'react-tinacms-inline';
-import { fetchGraphql } from 'react-tinacms-strapi';
-import { useCMS, useForm, usePlugin } from 'tinacms';
 import Container from 'components/container';
 import Header from 'components/header';
 import Layout from 'components/layout';
 import PostBody from 'components/post/post-body';
 import PostHeader from 'components/post/post-header';
 import PostTitle from 'components/post/post-title';
-import { CMS_NAME } from 'lib/constants';
+import { getArticle, getArticleSlugs } from 'lib/api';
+import { BLOG_NAME } from 'lib/constants';
+import ErrorPage from 'next/error';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { InlineForm } from 'react-tinacms-inline';
+import { fetchGraphql } from 'react-tinacms-strapi';
+import { useCMS, useForm, usePlugin } from 'tinacms';
 
-export default function Post({ post: initialPost, morePosts, preview }) {
+export default function Post({ article, preview }) {
   const cms = useCMS();
   const formConfig = {
-    id: initialPost.id,
+    id: article.id,
     label: 'Article',
-    initialValues: initialPost,
+    initialValues: article,
     onSubmit: async (values) => {
       const saveMutation = `
       mutation UpdateArticle(
@@ -39,7 +40,7 @@ export default function Post({ post: initialPost, morePosts, preview }) {
       }`;
       try {
         const response = await fetchGraphql(
-          process.env.NEXT_PUBLIC_STRAPI_URL,
+          process.env.NEXT_PUBLIC_API_URL,
           saveMutation,
           {
             id: values.id,
@@ -75,22 +76,15 @@ export default function Post({ post: initialPost, morePosts, preview }) {
             <article className="mb-32">
               <Head>
                 <title>
-                  {post.title} | {CMS_NAME}
+                  {post.title} | {BLOG_NAME}
                 </title>
-                <meta
-                  property="og:image"
-                  content={
-                    process.env.NEXT_PUBLIC_STRAPI_URL + post.coverImage.url
-                  }
-                />
+                <meta property="og:image" content={post.coverImage.url} />
               </Head>
               <InlineForm form={form}>
                 <PostHeader
                   title={post.title}
-                  coverImage={
-                    process.env.NEXT_PUBLIC_STRAPI_URL + post.coverImage.url
-                  }
-                  date={post.date}
+                  coverImage={post.coverImage.url}
+                  date={post.published_at}
                   author={post.author}
                 />
                 <PostBody content={post.content} />
@@ -104,72 +98,27 @@ export default function Post({ post: initialPost, morePosts, preview }) {
 }
 
 export async function getStaticProps({ params, preview, previewData }) {
-  const postResults = await fetchGraphql(
-    process.env.NEXT_PUBLIC_STRAPI_URL,
-    `
-    query{
-      articles(where: {slug: "${params.slug}"}){
-        id
-        title
-        date
-        slug
-        content
-        author {
-          name
-          picture { 
-            url
-          }
-        }
-        coverImage {
-          url
-        }
-      }
-    }
-  `
-  );
-  const post = postResults.data.articles[0];
-
-  if (preview) {
-    return {
-      props: {
-        post: {
-          ...post,
-        },
-        preview,
-        ...previewData,
-      },
-    };
-  }
+  const article = (await getArticle(params.slug)) || [];
+  // const categories = (await getCategories()) || [];
   return {
     props: {
-      post: {
-        ...post,
-      },
-      preview: false,
+      article,
+      // categories,
+      preview: !!preview,
+      ...(preview ? { ...previewData } : {}),
     },
+    revalidate: 1,
   };
 }
 
 export async function getStaticPaths() {
-  const postResults = await fetchGraphql(
-    process.env.NEXT_PUBLIC_STRAPI_URL,
-    `
-    query{
-      articles{
-        slug
-      }
-    }
-  `
-  );
-
+  const slugs = (await getArticleSlugs()) || [];
   return {
-    paths: postResults.data.articles.map((post) => {
-      return {
-        params: {
-          slug: post.slug,
-        },
-      };
-    }),
+    paths: slugs.map((slug) => ({
+      params: {
+        slug,
+      },
+    })),
     fallback: false,
   };
 }

@@ -7,18 +7,18 @@ export default function PostBody({ content }) {
       <InlineWysiwyg
         name="content"
         format="markdown"
-        imageProps={{
-          parse: (filename) => {
-            console.log(filename);
-            return `${process.env.NEXT_PUBLIC_STRAPI_URL}/${filename}`;
-          },
-        }}
+        // imageProps={{
+        //   parse: (filename) => {
+        //     console.log(filename);
+        //     return `${process.env.NEXT_PUBLIC_API_URL}/${filename}`;
+        //   },
+        // }}
       >
         <ReactMarkdown
           source={content}
-          transformImageUri={(uri) =>
-            `${process.env.NEXT_PUBLIC_STRAPI_URL}${uri}`
-          }
+          // transformImageUri={(uri) =>
+          //   `${process.env.NEXT_PUBLIC_API_URL}${uri}`
+          // }
         />
       </InlineWysiwyg>
     </div>

@@ -1,6 +1,9 @@
 {
-  "name": "blog-starter",
+  "name": "startup-truth",
   "version": "1.0.0",
+  "private": true,
+  "description": "Blog Website created for startup truth",
+  "author": "Paul van Dyk <paul@vandyk.fr>",
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -22,6 +25,7 @@
     "remark": "11.0.2",
     "remark-html": "10.0.0",
     "styled-components": "^5.1.1",
+    "tailwindcss-filters": "^3.0.0",
     "tinacms": "^0.22.0"
   },
   "devDependencies": {

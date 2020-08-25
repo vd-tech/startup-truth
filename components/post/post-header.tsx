@@ -1,24 +1,19 @@
-import Avatar from 'components/avatar';
+import EditButton from 'components/edit-button';
 import { InlineImage, InlineText } from 'react-tinacms-inline';
-import { useCMS } from 'tinacms';
 import PostAuthor from './post-author';
 import PostTitle from './post-title';
-import EditButton from 'components/edit-button';
 
 export default function PostHeader({ title, coverImage, date, author }) {
-  const cms = useCMS();
+  const AuthorDate = (
+    <PostAuthor name={author.name} picture={author.picture.url} date={date} />
+  );
   return (
     <>
       <PostTitle>
         <InlineText name="title" />
       </PostTitle>
       <div className="hidden md:flex justify-between align-middle  md:mb-12">
-        <PostAuthor
-          name={author.name}
-          picture={process.env.NEXT_PUBLIC_STRAPI_URL + author.picture.url}
-          date={date}
-        />
-
+        {AuthorDate}
         <EditButton />
       </div>
       <div className="mb-8 md:mb-16 -mx-5 sm:mx-0">
@@ -26,7 +21,7 @@ export default function PostHeader({ title, coverImage, date, author }) {
           name="coverImage.url"
           previewSrc={(formValues) => {
             debugger;
-            return `${process.env.NEXT_PUBLIC_STRAPI_URL}${formValues.coverImage.url}`;
+            return `${process.env.NEXT_PUBLIC_API_URL}${formValues.coverImage.url}`;
           }}
           uploadDir={() => '/uploads'}
           parse={(filename) => {
@@ -37,13 +32,7 @@ export default function PostHeader({ title, coverImage, date, author }) {
         </InlineImage>{' '}
       </div>
       <div className="max-w-2xl mx-auto">
-        <div className="block md:hidden mb-6">
-          <PostAuthor
-            name={author.name}
-            picture={process.env.NEXT_PUBLIC_STRAPI_URL + author.picture.url}
-            date={date}
-          />
-        </div>
+        <div className="block md:hidden mb-6">{AuthorDate}</div>
       </div>
     </>
   );

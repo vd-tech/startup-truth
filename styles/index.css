@@ -69,13 +69,25 @@ blockquote p {
 /* Stop purging. */
 
 /* Write you own custom component styles here */
-.place-center {
-  @apply grid;
-  place-items: center;
-}
 
 /* Start purging... */
 @tailwind utilities;
 /* Stop purging. */
 
 /* Your own custom utilities */
+
+@responsive {
+  .place-center {
+    @apply grid;
+    place-items: center;
+  }
+  .bg-blur-dark {
+    @apply backdrop-blur;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .bg-blur-light {
+    @apply backdrop-blur;
+    background: rgba(255, 255, 255, 0.15);
+  }
+}

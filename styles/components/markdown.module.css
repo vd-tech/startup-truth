@@ -1,3 +1,14 @@
 .markdown h2 {
   @apply text-primary;
+  @apply leading-snug;
+  @apply text-3xl;
+}
+.markdown p {
+  @apply text-justify;
+}
+
+@screen sm {
+  .markdown h2 {
+    @apply text-4xl;
+  }
 }

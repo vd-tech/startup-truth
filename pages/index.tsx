@@ -1,72 +1,49 @@
-import { CMS_NAME } from '../lib/constants';
 import Container from 'components/container';
-import Head from 'next/head';
 import HeroPost from 'components/hero-post';
 import Intro from 'components/intro';
 import Layout from 'components/layout';
-import MoreStories from 'components/more-stories';
-import { fetchGraphql } from 'react-tinacms-strapi';
+import { getArticles, getCategories } from 'lib/api';
+import Head from 'next/head';
+import { BLOG_NAME } from 'lib/constants';
 
-export default function Index({ allPosts, preview = false }) {
-  const heroPost = allPosts[0];
-  const morePosts = allPosts.slice(1);
+export default function Index({ articles, preview = false }) {
   return (
     <>
       <Layout {...{ preview }}>
         <Head>
-          <title>Next.js Blog Example with {CMS_NAME}</title>
+          <title>Next.js Blog Example with {BLOG_NAME}</title>
         </Head>
-        <Container>
-          <Intro />
-          {heroPost && (
-            <HeroPost
-              title={heroPost.title}
-              coverImage={
-                process.env.NEXT_PUBLIC_STRAPI_URL + heroPost.coverImage.url
-              }
-              date={heroPost.date}
-              author={heroPost.author}
-              slug={heroPost.slug}
-              excerpt={heroPost.excerpt}
-            />
-          )}
-          {morePosts.length > 0 && <MoreStories posts={morePosts} />}
-        </Container>
+        <div className="max-w-xl mx-auto">
+          <Container>
+            <Intro />
+            {articles.map((post) => (
+              <HeroPost
+                key={post.slug}
+                title={post.title}
+                coverImage={post.coverImage.url}
+                date={post.published_at}
+                author={post.author}
+                slug={post.slug}
+                excerpt={post.excerpt}
+              />
+            ))}
+          </Container>
+        </div>
       </Layout>
     </>
   );
 }
 
-export async function getStaticProps({ params, preview, previewData }) {
-  const postResults = await fetchGraphql(
-    process.env.NEXT_PUBLIC_STRAPI_URL,
-    `
-    query{
-      articles {
-        title
-        date
-        slug
-        author {
-          name
-          picture { 
-            url
-          }
-        }
-        excerpt
-        coverImage {
-          url
-        }
-      }
-    }
-  `
-  );
-  if (preview) {
-    return {
-      props: { allPosts: postResults.data.articles, preview, ...previewData },
-    };
-  }
-
+export async function getStaticProps({ preview, previewData }) {
+  const articles = (await getArticles()) || [];
+  const categories = (await getCategories()) || [];
   return {
-    props: { allPosts: postResults.data.articles, preview: false },
+    props: {
+      articles,
+      categories,
+      preview: !!preview,
+      ...(preview ? { ...previewData } : {}),
+    },
+    revalidate: 1,
   };
 }

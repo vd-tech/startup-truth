@@ -1,15 +1,10 @@
 import Date from 'components/date-formater';
+import Avatar from 'components/avatar';
 
 export default function PostAuthor({ name, picture, date }) {
   return (
     <div className="flex items-center">
-      {picture && (
-        <img
-          src={picture}
-          className="w-1h-16 h-16 mr-2 rounded-full"
-          alt={name}
-        />
-      )}
+      <Avatar {...{ picture, alt: name }} />
       {(name || date) && (
         <div>
           {name && (

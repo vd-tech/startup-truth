@@ -1,43 +1,104 @@
-import fs from 'fs'
-import { join } from 'path'
-import matter from 'gray-matter'
+import { fetchGraphql } from 'react-tinacms-strapi';
 
-const postsDirectory = join(process.cwd(), '_posts')
+async function fetchAPI(query, { variables = undefined } = {}) {
+  const res = await fetchGraphql(
+    process.env.NEXT_PUBLIC_API_URL,
+    query,
+    variables
+  );
 
-export function getPostSlugs() {
-  return fs.readdirSync(postsDirectory)
+  if (res.errors) {
+    console.error(res.errors);
+    throw new Error('Failed to fetch API');
+  }
+  return res.data;
 }
 
-export function getPostBySlug(slug, fields = []) {
-  const realSlug = slug.replace(/\.md$/, '')
-  const fullPath = join(postsDirectory, `${realSlug}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
-  const { data, content } = matter(fileContents)
+const articlesData = `
+title
+published_at
+slug
+author {
+  name
+  picture { 
+    url
+  }
+}
+excerpt
+coverImage {
+  url
+}
+`;
 
-  const items = {}
-
-  // Ensure only the minimal needed data is exposed
-  fields.forEach((field) => {
-    if (field === 'slug') {
-      items[field] = realSlug
+export async function getArticles() {
+  const data = await fetchAPI(`query Articles {
+    articles(sort: "published_at:desc") {
+     ${articlesData}
     }
-    if (field === 'content') {
-      items[field] = content
-    }
-
-    if (data[field]) {
-      items[field] = data[field]
-    }
-  })
-
-  return items
+  }`);
+  return data.articles;
 }
 
-export function getAllPosts(fields = []) {
-  const slugs = getPostSlugs()
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug, fields))
-    // sort posts by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? '-1' : '1'))
-  return posts
+export async function getArticleSlugs() {
+  const data = await fetchAPI(
+    `query Articles {
+      articles {
+       slug
+      }
+    }`
+  );
+  return (data.articles || [])
+    .map((article) => article?.slug)
+    .filter((slug) => slug);
+}
+
+export async function getArticle(slug) {
+  const data = await fetchAPI(
+    `query Articles($slug: String!) {
+      articles(where: { slug: $slug }, sort: "published_at:desc") {
+        id
+        ${articlesData}
+        content
+      }
+    }`,
+    { variables: { slug } }
+  );
+  return data.articles[0];
+}
+
+export async function getCategories() {
+  const data = await fetchAPI(`query Categories {
+    categories {
+      id
+      name
+    }
+  }`);
+  return data.categories;
+}
+
+export async function getCategory(id) {
+  const data = await fetchAPI(
+    `query Category($id: ID!) {
+    category(id: $id) {
+      id
+      name
+      articles {
+        title
+        content
+        slug
+        image {
+          url
+          alternativeText
+        }
+        category {
+          id
+          name
+        }
+      }
+    }
+  }
+`,
+    { variables: { id } }
+  );
+  return data.category;
 }

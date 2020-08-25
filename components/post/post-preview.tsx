@@ -2,6 +2,7 @@ import Avatar from 'components/avatar';
 import CoverImage from 'components/cover-image';
 import DateFormater from 'components/date-formater';
 import Link from 'next/link';
+import PostAuthor from './post-author';
 
 export default function PostPreview({
   title,
@@ -25,10 +26,7 @@ export default function PostPreview({
         <DateFormater dateString={date} />
       </div>
       <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-      <Avatar
-        name={author.name}
-        picture={process.env.NEXT_PUBLIC_STRAPI_URL + author.picture.url}
-      />
+      <PostAuthor name={author.name} date={date} picture={author.picture.url} />
     </div>
   );
 }

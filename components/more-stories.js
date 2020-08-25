@@ -11,10 +11,8 @@ export default function MoreStories({ posts }) {
           <PostPreview
             key={post.slug}
             title={post.title}
-            coverImage={
-              process.env.NEXT_PUBLIC_STRAPI_URL + post.coverImage.url
-            }
-            date={post.date}
+            coverImage={post.coverImage.url}
+            date={post.published_at}
             author={post.author}
             slug={post.slug}
             excerpt={post.excerpt}
