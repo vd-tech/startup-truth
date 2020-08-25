@@ -3,16 +3,11 @@ import HeroPost from 'components/hero-post';
 import Intro from 'components/intro';
 import Layout from 'components/layout';
 import { getArticles, getCategories } from 'lib/api';
-import Head from 'next/head';
-import { BLOG_NAME } from 'lib/constants';
 
 export default function Index({ articles, preview = false }) {
   return (
     <>
       <Layout {...{ preview }}>
-        <Head>
-          <title>Next.js Blog Example with {BLOG_NAME}</title>
-        </Head>
         <div className="max-w-xl mx-auto">
           <Container>
             <Intro />
