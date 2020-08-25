@@ -79,6 +79,7 @@ export default function Post({ article, preview }) {
                   {post.title} | {BLOG_NAME}
                 </title>
                 <meta property="og:image" content={post.coverImage.url} />
+                <meta name="description" content={post.excerpt} />
               </Head>
               <InlineForm form={form}>
                 <PostHeader

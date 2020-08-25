@@ -42,7 +42,7 @@ export default function Meta() {
       <title>
         Startup Truth - The Real Truth of Life in a South African Startup
       </title>
-      {/* <meta property="og:image" content={HOME_OG_IMAGE_URL} /> */}
+      <meta property="og:image" content="/startup.jpg" />
     </Head>
   );
 }
